@@ -6,11 +6,13 @@ import { User } from '../user/entities/user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
-    JwtModule.register({ secret: process.env.JWT_SECRET || 'supersecret' }),
+    PassportModule,
+    JwtModule.register({ secret: 'supersecret' }),
     MailerModule.forRootAsync({
       useFactory: () => ({
         transport: {
@@ -28,5 +30,6 @@ import { MailerModule } from '@nestjs-modules/mailer';
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
+  exports: [JwtStrategy],
 })
 export class AuthModule {}
