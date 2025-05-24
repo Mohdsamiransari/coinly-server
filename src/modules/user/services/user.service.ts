@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { ErrorResponseDto, SuccessResponseDto } from 'src/common/response';
-import { JwtService } from '@nestjs/jwt';
 import { UserResponseDto } from '../dtos';
 import * as argon2 from 'argon2';
 @Injectable({})
@@ -11,7 +10,6 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepo: Repository<User>,
-    private jwtService: JwtService,
   ) {}
 
   // Get All User

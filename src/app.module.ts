@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './modules/user/entities/user.entity';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './modules/user/user.module';
-import { TaskModule } from './modules/task/task.module';
+import { ExpenseModule } from './modules/expense/expense.module';
 
 @Module({
   imports: [
@@ -17,13 +17,14 @@ import { TaskModule } from './modules/task/task.module';
       database: 'coinly',
       entities: [User],
       synchronize: true,
+      autoLoadEntities: true,
     }),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
     AuthModule,
     UserModule,
-    TaskModule,
+    ExpenseModule,
   ],
 })
 export class AppModule {}

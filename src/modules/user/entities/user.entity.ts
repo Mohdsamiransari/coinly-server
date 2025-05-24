@@ -1,13 +1,8 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { DateEntity } from 'src/common/entities/date_entity';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class User {
+export class User extends DateEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -25,14 +20,7 @@ export class User {
 
   @Column({ type: 'int', nullable: true })
   otp: number | null;
-  
+
   @Column({ type: 'datetime', nullable: true })
   otp_expiration: Date | null;
-  
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 }
