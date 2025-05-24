@@ -14,6 +14,7 @@ export class UserService {
     private jwtService: JwtService,
   ) {}
 
+  // Get All User
   async getAllUser() {
     const users = await this.userRepo.find();
 
@@ -22,6 +23,7 @@ export class UserService {
     return new SuccessResponseDto('Users Find Successfully', users);
   }
 
+  // Get Single User
   async getSingleUserById(userId: number) {
     try {
       const user = await this.userRepo.findOne({
@@ -39,6 +41,7 @@ export class UserService {
     }
   }
 
+  // Change User Password
   async changePassword(email: string, newPassword: string) {
     const user = await this.userRepo.findOne({ where: { email: email } });
 
@@ -53,4 +56,6 @@ export class UserService {
 
     return new SuccessResponseDto('Password Reset Successfully');
   }
+
+  // Update User Service
 }
