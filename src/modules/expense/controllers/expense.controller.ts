@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Request,
   UseGuards,
@@ -24,5 +25,11 @@ export class ExpenseController {
   @Get('user')
   expenseByUserId(@Request() req: any) {
     return this.expenseService.getExpensesByUserId(req.user.sub);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('detail')
+  getExpenseDetail(@Param('expense_id') expense_id: number) {
+    return this.expenseService.getExpenseDetail(expense_id);
   }
 }

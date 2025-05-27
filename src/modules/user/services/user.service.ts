@@ -5,6 +5,8 @@ import { User } from '../entities/user.entity';
 import { ErrorResponseDto, SuccessResponseDto } from 'src/common/response';
 import { UserResponseDto } from '../dtos';
 import * as argon2 from 'argon2';
+import { FriendListResponseDto } from 'src/modules/friends/dtos';
+
 @Injectable({})
 export class UserService {
   constructor(
@@ -36,6 +38,27 @@ export class UserService {
       );
     } catch (error) {
       return new ErrorResponseDto('Invalid or Expired Token');
+    }
+  }
+
+  // Get All Friends
+  async getAllFriends(userId: number) {
+    try {
+      const user = await this.userRepo.findOne({
+        where: { id: userId },
+        relations: ['friends'],
+      });
+
+      if (!user) {
+        return new ErrorResponseDto('User not found');
+      }
+
+      return new SuccessResponseDto(
+        'Friends retrieved successfully',
+        new FriendListResponseDto(user.friends),
+      );
+    } catch (error) {
+      return new ErrorResponseDto(`Error Finding All Friends ${error.message}`);
     }
   }
 

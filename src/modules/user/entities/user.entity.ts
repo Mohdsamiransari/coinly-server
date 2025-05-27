@@ -1,5 +1,12 @@
 import { DateEntity } from 'src/common/entities/date_entity';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity()
 export class User extends DateEntity {
@@ -23,4 +30,12 @@ export class User extends DateEntity {
 
   @Column({ type: 'datetime', nullable: true })
   otp_expiration: Date | null;
+
+  @ManyToMany(() => User)
+  @JoinTable({
+    name: 'user_friends',
+    joinColumn: { name: 'user_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'friend_id', referencedColumnName: 'id' },
+  })
+  friends: User[];
 }

@@ -50,4 +50,22 @@ export class ExpenseService {
       return new ErrorResponseDto(`Failed to fetch expenses: ${error.message}`);
     }
   }
+
+  async getExpenseDetail(expenseId: number) {
+    try {
+      const expense = await this.expenseRepo.findOne({
+        where: { id: expenseId },
+        relations :['expense_category']
+      });
+
+      if (!expense)
+        return new ErrorResponseDto(`No Expense Found With This Id`);
+
+      return new SuccessResponseDto('Expense Found Successfully', expense);
+    } catch (error) {
+      return new ErrorResponseDto(
+        `Failed To Fetch Expense Detail: ${error.message}`,
+      );
+    }
+  }
 }

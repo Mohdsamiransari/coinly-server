@@ -26,9 +26,15 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('friends')
+  getFriends(@Request() req: any) {
+    return this.userService.getAllFriends(req.user.sub);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post('change-password')
   changePassword(@Request() req, @Body('newPassword') newPassword: string) {
-    const email = req.user.email
+    const email = req.user.email;
     return this.userService.changePassword(email, newPassword);
   }
 }
