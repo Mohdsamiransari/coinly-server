@@ -1,16 +1,16 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ErrorResponseDto, SuccessResponseDto } from 'src/common/response';
+import { In, Repository } from 'typeorm';
+import { Friends } from '../entities/friends.entity';
 import { User } from 'src/modules/user/entities/user.entity';
-import { Repository } from 'typeorm';
+import { FriendsResponseDto } from '../dtos';
 
 @Injectable()
 export class FriendsService {
   constructor(
+    @InjectRepository(Friends)
+    private friendsRepo: Repository<Friends>,
     @InjectRepository(User)
     private userRepo: Repository<User>,
   ) {}
@@ -20,21 +20,25 @@ export class FriendsService {
       if (userId === friendId)
         return new ErrorResponseDto('You Cannot Follow Yourself');
 
-      const user = await this.userRepo.findOne({
-        where: { id: userId },
-        relations: ['friends'],
-      });
+      const user = await this.userRepo.findOneBy({ id: userId });
+
+      if (!user) return new ErrorResponseDto('User Not Found');
 
       const friend = await this.userRepo.findOneBy({ id: friendId });
+      if (!friend) return new ErrorResponseDto('Friend Not Found');
 
-      if (!user || !friend)
-        return new ErrorResponseDto('User or Friend Not Found');
+      const alreadyFollowing = await this.friendsRepo.findOneBy({
+        userId: userId,
+        friendId: friendId,
+      });
 
-      const alreadyFollowing = user.friends.some((f) => f.id == friendId);
       if (alreadyFollowing) return new ErrorResponseDto('Already Following');
 
-      user.friends.push(friend);
-      await this.userRepo.save(user);
+      await this.friendsRepo.save({
+        userId: userId,
+        friendId: friendId,
+        status: 'following',
+      });
 
       return new SuccessResponseDto(
         `User ${userId} is now following User ${friendId}`,
@@ -46,28 +50,53 @@ export class FriendsService {
 
   async unfollowUser(userId: number, friendId: number) {
     try {
-      const user = await this.userRepo.findOne({
-        where: { id: userId },
-        relations: ['friends'],
+      const user = await this.userRepo.findOneBy({
+        id: userId,
       });
 
       if (!user) {
         throw new NotFoundException('User not found');
       }
 
-      const isFollowing = user.friends.some((f) => f.id === friendId);
-      if (!isFollowing) {
-        throw new BadRequestException('Not following this user');
-      }
+      const isFollowing = await this.friendsRepo.findOneBy({
+        userId: userId,
+        friendId: friendId,
+      });
 
-      user.friends = user.friends.filter((f) => f.id !== friendId);
-      await this.userRepo.save(user);
+      if (!isFollowing) return new ErrorResponseDto('Not Following');
+
+      await this.friendsRepo.delete({ userId: userId, friendId: friendId });
 
       return new SuccessResponseDto(
         `User ${userId} has unfollowed User ${friendId}`,
       );
     } catch (error) {
       return new ErrorResponseDto(`Error UnFollowing user ${error.message} `);
+    }
+  }
+
+  async getAllFriends(userId: number) {
+    try {
+      const friendships = await this.friendsRepo.find({
+        where: { userId },
+      });
+
+      if (friendships.length === 0) {
+        return new SuccessResponseDto('No Friends Found', []);
+      }
+
+      const friendIds = friendships.map((f) => f.friendId);
+      const friends = await this.userRepo.findBy({ id: In(friendIds) });
+
+      const friendResponseDtos = friends.map(
+        (friend) => new FriendsResponseDto(friend),
+      );
+      return new SuccessResponseDto(
+        'Friends retrieved successfully',
+        friendResponseDtos,
+      );
+    } catch (error) {
+      return new ErrorResponseDto(`Error Finding All Friends ${error.message}`);
     }
   }
 }

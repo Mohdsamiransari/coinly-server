@@ -25,11 +25,7 @@ export class UserController {
     return this.userService.getSingleUserById(req.user.sub);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('friends')
-  getFriends(@Request() req: any) {
-    return this.userService.getAllFriends(req.user.sub);
-  }
+  
 
   @UseGuards(JwtAuthGuard)
   @Post('change-password')

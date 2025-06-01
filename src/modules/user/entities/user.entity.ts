@@ -1,12 +1,5 @@
 import { DateEntity } from 'src/common/entities/date_entity';
-import {
-  Column,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class User extends DateEntity {
@@ -22,6 +15,18 @@ export class User extends DateEntity {
   @Column({ nullable: true })
   last_name?: string;
 
+  @Column({ nullable: true })
+  total_balance: number;
+
+  @Column({ nullable: true })
+  total_debit: number;
+
+  @Column({ nullable: true })
+  total_credit: number;
+
+  @Column({ nullable: true })
+  qr_code: string;
+
   @Column()
   hash: string;
 
@@ -30,12 +35,4 @@ export class User extends DateEntity {
 
   @Column({ type: 'datetime', nullable: true })
   otp_expiration: Date | null;
-
-  @ManyToMany(() => User)
-  @JoinTable({
-    name: 'user_friends',
-    joinColumn: { name: 'user_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'friend_id', referencedColumnName: 'id' },
-  })
-  friends: User[];
 }

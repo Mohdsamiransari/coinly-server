@@ -1,10 +1,12 @@
 import {
+  IsArray,
   IsDate,
   IsEnum,
   IsISO8601,
   IsNumber,
   IsOptional,
   IsString,
+  ValidateNested,
 } from 'class-validator';
 import { ExpenseMethod, ExpenseType } from '../entities/expense.entity';
 import { Type } from 'class-transformer';
@@ -44,4 +46,18 @@ export class CreateExpenseDto {
 
   @IsNumber()
   user_id: number;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested()
+  @Type(()=> SplitDto)
+  splits: SplitDto[]
+}
+
+
+export class SplitDto{
+  @IsNumber()
+  friend_id: number;
+  @IsNumber()
+  amount: number;
 }

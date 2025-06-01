@@ -42,25 +42,7 @@ export class UserService {
   }
 
   // Get All Friends
-  async getAllFriends(userId: number) {
-    try {
-      const user = await this.userRepo.findOne({
-        where: { id: userId },
-        relations: ['friends'],
-      });
-
-      if (!user) {
-        return new ErrorResponseDto('User not found');
-      }
-
-      return new SuccessResponseDto(
-        'Friends retrieved successfully',
-        new FriendListResponseDto(user.friends),
-      );
-    } catch (error) {
-      return new ErrorResponseDto(`Error Finding All Friends ${error.message}`);
-    }
-  }
+  
 
   // Change User Password
   async changePassword(email: string, newPassword: string) {

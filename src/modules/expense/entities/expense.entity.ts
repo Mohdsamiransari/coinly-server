@@ -5,9 +5,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ExpenseCategory } from './expense-category.entity';
+import { SplitExpense } from './split-expense.entity';
 
 export enum ExpenseType {
   CREDIT = 'credit',
@@ -63,4 +65,7 @@ export class Expense extends DateEntity {
   @ManyToOne(() => User)
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  @OneToMany(() => SplitExpense, (split) => split.expense, {cascade:true})
+  splits: SplitExpense[];
 }

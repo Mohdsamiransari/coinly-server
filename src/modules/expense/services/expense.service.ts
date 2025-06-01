@@ -1,19 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Expense } from '../entities/expense.entity';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { ErrorResponseDto, SuccessResponseDto } from 'src/common/response';
 import { CreateExpenseDto } from '../dtos/create-expense.dto';
+import { SplitExpense } from '../entities/split-expense.entity';
 
 @Injectable()
 export class ExpenseService {
   constructor(
     @InjectRepository(Expense)
     private expenseRepo: Repository<Expense>,
+    @InjectRepository(SplitExpense)
+    private sliptRepo: Repository<SplitExpense>,
+    private dataSource: DataSource,
   ) {}
 
   async createExpense(dto: CreateExpenseDto) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
     try {
+      // 1. Create the expense entity
       const newExpense = this.expenseRepo.create({
         expense_name: dto.expense_name,
         expense_amount: dto.expense_amount,
@@ -27,13 +36,33 @@ export class ExpenseService {
         user: { id: dto.user_id },
       });
 
-      await this.expenseRepo.save(newExpense);
+      const savedExpense = await queryRunner.manager.save(newExpense);
 
-      return new SuccessResponseDto('Expense Created Successfully', newExpense);
-    } catch (error) {
-      return new ErrorResponseDto(
-        `Error Creating New Expense ${error.message}`,
+      // 2. Handle expense splits
+      if (dto.splits?.length) {
+        for (const split of dto.splits) {
+          const splitRecord = this.sliptRepo.create({
+            amount: split.amount,
+            paid_by: { id: dto.user_id },
+            owed_by: { id: split.friend_id },
+            expense: { id: savedExpense.id },
+          });
+          await queryRunner.manager.save(splitRecord);
+        }
+      }
+
+      await queryRunner.commitTransaction();
+      return new SuccessResponseDto(
+        'Expense Created Successfully',
+        savedExpense,
       );
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      return new ErrorResponseDto(
+        `Error Creating New Expense: ${error.message}`,
+      );
+    } finally {
+      await queryRunner.release();
     }
   }
 
@@ -41,7 +70,7 @@ export class ExpenseService {
     try {
       const expenses = await this.expenseRepo.find({
         where: { user_id: userId },
-        relations: ['expense_category'],
+        relations: ['expense_category','splits','splits.owed_by'],
         order: { expense_date: 'DESC' },
       });
 
@@ -55,7 +84,7 @@ export class ExpenseService {
     try {
       const expense = await this.expenseRepo.findOne({
         where: { id: expenseId },
-        relations :['expense_category']
+        relations: ['expense_category','splits'],
       });
 
       if (!expense)

@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './modules/user/user.module';
 import { ExpenseModule } from './modules/expense/expense.module';
 import { FriendsModule } from './modules/friends/friends.module';
+import { Friends } from './modules/friends/entities/friends.entity';
 
 @Module({
   imports: [
@@ -14,9 +15,9 @@ import { FriendsModule } from './modules/friends/friends.module';
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: 'Rezolut@123',
+      password: 'root',
       database: 'coinly',
-      entities: [User],
+      entities: [User, Friends],
       synchronize: true,
       autoLoadEntities: true,
     }),

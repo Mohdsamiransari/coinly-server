@@ -2,6 +2,7 @@ import {
     Body,
   Controller,
   Delete,
+  Get,
   Param,
   Post,
   Request,
@@ -25,5 +26,10 @@ export class FriendsController {
   @Delete('unfollow')
   unfollowUser(@Request() req: any, @Body('friend_id') friend_id: number) {
     return this.friendsService.unfollowUser(req.user.sub, friend_id);
+  }
+  @UseGuards(JwtAuthGuard)
+  @Get('all')
+  getFriends(@Request() req: any) {
+    return this.friendsService.getAllFriends(req.user.sub);
   }
 }
