@@ -8,7 +8,7 @@ export class SplitExpense {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Expense, (expense) => expense.splits)
+  @ManyToOne(() => Expense, (expense) => expense.splits, {onDelete:"CASCADE"})
   @JoinColumn({ name: 'expense_id' })
   expense: Expense;
   

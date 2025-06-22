@@ -3,7 +3,6 @@ import { User } from '../entities/user.entity';
 export class UserResponseDto {
   id: number | undefined;
   email: string | undefined;
-
   first_name: string | undefined;
   last_name: string | undefined;
   createdAt: Date | undefined;
@@ -12,8 +11,9 @@ export class UserResponseDto {
   total_debit: number | undefined;
   total_credit: number | undefined;
   qr_code: string | undefined;
+  token: string | undefined
 
-  constructor(user: Partial<User>) {
+  constructor(user: Partial<User>,token?: string) {
     this.id = user.id;
     this.email = user.email;
     this.first_name = user.first_name;
@@ -24,5 +24,6 @@ export class UserResponseDto {
     this.total_debit = user.total_debit;
     this.total_credit = user.total_credit;
     this.qr_code = user.qr_code;
+    this.token = token;
   }
 }

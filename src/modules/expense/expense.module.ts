@@ -9,10 +9,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { ExpenseCategoryService } from './services/expense-category.service';
 import { ExpenseCategoryController } from './controllers/expense-category.controller';
 import { SplitExpense } from './entities/split-expense.entity';
+import { User } from '../user/entities/user.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Expense, ExpenseCategory, SplitExpense]),
+    TypeOrmModule.forFeature([Expense, ExpenseCategory, SplitExpense, User]),
     JwtModule.register({ secret: 'supersecret' }),
     AuthModule,
   ],

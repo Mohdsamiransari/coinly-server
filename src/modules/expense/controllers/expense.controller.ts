@@ -1,15 +1,19 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
+  Patch,
   Post,
+  Query,
   Request,
   UseGuards,
 } from '@nestjs/common';
 import { ExpenseService } from '../services/expense.service';
 import { CreateExpenseDto } from '../dtos/create-expense.dto';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
+import { UpdateExpenseDto } from '../dtos/update-expense.dto';
 
 @Controller('expense')
 export class ExpenseController {
@@ -17,8 +21,8 @@ export class ExpenseController {
 
   @UseGuards(JwtAuthGuard)
   @Post('create-expense')
-  createExpense(@Body() dto: CreateExpenseDto) {
-    return this.expenseService.createExpense(dto);
+  createExpense(@Request() req: any, @Body() dto: CreateExpenseDto) {
+    return this.expenseService.createExpense(req.user.sub, dto);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -29,7 +33,27 @@ export class ExpenseController {
 
   @UseGuards(JwtAuthGuard)
   @Get('detail')
-  getExpenseDetail(@Param('expense_id') expense_id: number) {
+  getExpenseDetail(@Query('expense_id') expense_id: number) {
     return this.expenseService.getExpenseDetail(expense_id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Delete('delete-all')
+  deleteAllExpenseByUserId(@Request() req: any) {
+    return this.expenseService.deleteAllExpenseByUserId(req.user.sub);
+  }
+  @UseGuards(JwtAuthGuard)
+  @Delete('delete')
+  deleteExpenseById(@Query('expense_id') expense_id: number) {
+    return this.expenseService.deleteExpenseById(expense_id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('update/:expense_id')
+  updateExpenseById(
+    @Param('expense_id') expenseId: number,
+    @Body() dto: UpdateExpenseDto,
+  ) {
+    return this.expenseService.updateExpenseById(expenseId, dto);
   }
 }

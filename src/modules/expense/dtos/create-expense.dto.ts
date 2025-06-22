@@ -44,9 +44,6 @@ export class CreateExpenseDto {
   @IsNumber()
   expense_category_id: number;
 
-  @IsNumber()
-  user_id: number;
-
   @IsOptional()
   @IsArray()
   @ValidateNested()

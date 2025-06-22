@@ -9,6 +9,9 @@ export class User extends DateEntity {
   @Column({ unique: true })
   email: string;
 
+  @Column()
+  username: string;
+
   @Column({ nullable: true })
   first_name?: string;
 

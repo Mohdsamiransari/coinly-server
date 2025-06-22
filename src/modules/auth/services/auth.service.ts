@@ -30,12 +30,18 @@ export class AuthService {
     const user = this.userRepo.create({
       email: dto.email,
       hash: hash,
+      username: dto.username,
     });
 
     await this.userRepo.save(user);
+
+    const payload = { sub: user.id, email: user.email };
+
+    const token = await this.jwtService.signAsync(payload);
+
     return new SuccessResponseDto(
       'User Created Successfully',
-      new UserResponseDto(user),
+      new UserResponseDto(user, token),
     );
   }
 
