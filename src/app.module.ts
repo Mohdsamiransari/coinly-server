@@ -13,10 +13,10 @@ import { UserModule } from './modules/user/user.module';
     }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'coinly-samirmohd701-c0b1.c.aivencloud.com',
+      host: process.env.DB_HOST,
       port: 11092,
       username: 'avnadmin',
-      password: 'AVNS_Xaq0CjwHix7W29kyyAt',
+      password: process.env.DB_PASSWORD,
       database: 'defaultdb',
       entities: [User],
       synchronize: true,
