@@ -1,24 +1,29 @@
 import { Module } from '@nestjs/common';
-import { AuthModule } from './modules/auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './modules/user/entities/user.entity';
 import { ConfigModule } from '@nestjs/config';
+import * as fs from 'fs';
+import { User } from './modules/user/entities/user.entity';
+import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'Rezolut@123',
-      database: 'coinly',
-      entities: [User],
-      synchronize: true,
-    }),
     ConfigModule.forRoot({
       isGlobal: true,
+    }),
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: 'coinly-samirmohd701-c0b1.c.aivencloud.com',
+      port: 11092,
+      username: 'avnadmin',
+      password: 'AVNS_Xaq0CjwHix7W29kyyAt',
+      database: 'defaultdb',
+      entities: [User],
+      synchronize: true,
+      ssl: {
+        ca: fs.readFileSync(__dirname + '/../ssl/ca.pem').toString(),
+        rejectUnauthorized: true,
+      },
     }),
     AuthModule,
     UserModule,
