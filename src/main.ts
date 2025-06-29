@@ -11,6 +11,6 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
-  await app.listen(process.env.PORT ?? 3333);
+  await app.listen(process.env.PORT ?? 3333,'0.0.0.0',()=>console.log("Connected to server"));
 }
 bootstrap();

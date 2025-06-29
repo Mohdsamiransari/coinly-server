@@ -31,7 +31,7 @@ export class Expense extends DateEntity {
   @Column()
   expense_name: string;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'timestamp' })
   expense_date: Date;
 
   @Column({ nullable: true, type: 'text' })
