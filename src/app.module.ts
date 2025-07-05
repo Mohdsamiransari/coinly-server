@@ -5,6 +5,9 @@ import * as fs from 'fs';
 import { User } from './modules/user/entities/user.entity';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
+import { ExpenseModule } from './modules/expense/expense.module';
+import { FriendsModule } from './modules/friends/friends.module';
+import { Friends } from './modules/friends/entities/friends.entity';
 
 @Module({
   imports: [
@@ -27,6 +30,8 @@ import { UserModule } from './modules/user/user.module';
     }),
     AuthModule,
     UserModule,
+    ExpenseModule,
+    FriendsModule,
   ],
 })
 export class AppModule {}

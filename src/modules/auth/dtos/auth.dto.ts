@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { IsEmail, IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { Unique } from "typeorm";
 
 export class AuthDto{
@@ -9,5 +9,9 @@ export class AuthDto{
     @IsString()
     @IsNotEmpty()
     password: string
+
+    @IsString()
+    @IsOptional()
+    username: string
     
 }

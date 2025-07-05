@@ -2,15 +2,16 @@ import {
   Body,
   Controller,
   Get,
+  Patch,
   Post,
   Request,
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
-import { ResetPasswordDto } from 'src/modules/auth/dtos';
+import { UpdateUserDto } from '../dtos';
 
-@Controller('user')
+@Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
 
@@ -20,15 +21,28 @@ export class UserController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Get('single-user')
+  @Get('me')
   singleUser(@Request() req: any) {
     return this.userService.getSingleUserById(req.user.sub);
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('change-password')
+  @Get('me/amount')
+  getUserAmount(@Request() req: any) {
+    return this.userService.getUserAmounts(req.user.sub);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('me/change-password')
   changePassword(@Request() req, @Body('newPassword') newPassword: string) {
-    const email = req.user.email
+    const email = req.user.email;
     return this.userService.changePassword(email, newPassword);
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch("me/update")
+  updateUser(@Request() req:any, @Body() dto:UpdateUserDto){
+    return this.userService.updateUser(req.user.sub,dto)
+  }
+
 }
