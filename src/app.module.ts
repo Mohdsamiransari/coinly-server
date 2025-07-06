@@ -8,6 +8,9 @@ import { UserModule } from './modules/user/user.module';
 import { ExpenseModule } from './modules/expense/expense.module';
 import { FriendsModule } from './modules/friends/friends.module';
 import { Friends } from './modules/friends/entities/friends.entity';
+import { Expense } from './modules/expense/entities/expense.entity';
+import { ExpenseCategory } from './modules/expense/entities/expense-category.entity';
+import { SplitExpense } from './modules/expense/entities/split-expense.entity';
 
 @Module({
   imports: [
@@ -21,7 +24,7 @@ import { Friends } from './modules/friends/entities/friends.entity';
       username: 'avnadmin',
       password: process.env.DB_PASSWORD,
       database: 'defaultdb',
-      entities: [User],
+      entities: [User, Friends, Expense, ExpenseCategory, SplitExpense],
       synchronize: true,
       ssl: {
         ca: fs.readFileSync(__dirname + '/../ssl/ca.pem').toString(),

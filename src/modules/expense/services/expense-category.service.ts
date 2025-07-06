@@ -32,6 +32,7 @@ export class ExpenseCategoryService {
         icon: dto.icon || 'default-icon',
       });
 
+
       await this.expenseCategoryRepo.save(newCategory);
 
       return new SuccessResponseDto(
@@ -50,6 +51,7 @@ export class ExpenseCategoryService {
       const allExpenseCategories = await this.expenseCategoryRepo.find({
         order: { createdAt: 'DESC' },
       });
+
       return new SuccessResponseDto(
         'Expense Categories Fetched Successfully',
         allExpenseCategories,
@@ -67,10 +69,9 @@ export class ExpenseCategoryService {
         where: { expense_category_id: categoryId },
       });
 
-      if (relatedExpenses) {
-        return new SuccessResponseDto(
-          'Expense Category Deleted Successfully',
-          relatedExpenses,
+      if (relatedExpenses.length > 0) {
+        return new ErrorResponseDto(
+          'Cannot delete category. There are expenses associated with this category.',
         );
       }
 
